@@ -2,6 +2,7 @@
 
 namespace Drupal\nodeviewcount\Form;
 
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
@@ -38,6 +39,13 @@ class NodeViewCountSettingsForm extends ConfigFormBase {
   protected $dateFormatter;
 
   /**
+   * The cache tags invalidator.
+   *
+   * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
+   */
+  protected $cacheTagsInvalidator;
+
+  /**
    * Constructs a NodeViewCountSettingsForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -48,12 +56,15 @@ class NodeViewCountSettingsForm extends ConfigFormBase {
    *   The entity display repository.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
+   * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
+   *   The cache tags invalidator.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, EntityDisplayRepositoryInterface $entity_display_repository, DateFormatterInterface $date_formatter) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, EntityDisplayRepositoryInterface $entity_display_repository, DateFormatterInterface $date_formatter, CacheTagsInvalidatorInterface $cache_tags_invalidator) {
     parent::__construct($config_factory);
     $this->entityTypeManager = $entity_type_manager;
     $this->entityDisplayRepository = $entity_display_repository;
     $this->dateFormatter = $date_formatter;
+    $this->cacheTagsInvalidator = $cache_tags_invalidator;
   }
 
   /**
@@ -64,7 +75,8 @@ class NodeViewCountSettingsForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('entity_display.repository'),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('cache_tags.invalidator')
     );
   }
 
@@ -233,7 +245,6 @@ class NodeViewCountSettingsForm extends ConfigFormBase {
         $excluded_user_roles[$key] = 0;
       }
     }
-
     $this->config('nodeviewcount.settings')
       ->set('node_types', $form_state->getValue('node_types'))
       ->set('view_modes', $form_state->getValue('view_modes'))
@@ -241,7 +252,7 @@ class NodeViewCountSettingsForm extends ConfigFormBase {
       ->set('excluded_user_roles', $excluded_user_roles)
       ->set('logs_life_time', $form_state->getValue('logs_life_time'))
       ->save(TRUE);
-
+    $this->cacheTagsInvalidator->invalidateTags(['node_view']);
     parent::submitForm($form, $form_state);
   }
 
