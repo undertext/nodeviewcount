@@ -6,8 +6,6 @@ dependencies:
   module:
     - node
     - user
-_core:
-  default_config_hash: ejtjaHn0WlW3rVZePYrk7DgWgqN2ZWY_9iJVpFQIe_U
 id: node_views_count_statistics
 label: 'Node views count statistics'
 module: views
@@ -151,7 +149,7 @@ display:
           click_sort_column: value
           type: string
           settings:
-            link_to_entity: false
+            link_to_entity: true
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -328,9 +326,9 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  page_1:
+  page:
     display_plugin: page
-    id: page_1
+    id: page
     display_title: Page
     position: 1
     display_options:
@@ -341,7 +339,7 @@ display:
         title: 'Node view count statistics'
         description: ''
         expanded: false
-        parent: ''
+        parent: system.admin_config_content
         weight: 0
         context: '0'
         menu_name: admin
