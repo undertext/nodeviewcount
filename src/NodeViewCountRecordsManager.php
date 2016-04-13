@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\nodeviewcount\NodeViewCountRecordsManager.
- */
-
 namespace Drupal\nodeviewcount;
 
 use Drupal\Core\Config\ConfigFactoryInterface;

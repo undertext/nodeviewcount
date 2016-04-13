@@ -17,7 +17,7 @@ use Drupal\node\NodeInterface;
  *
  * This hook can return FALSE to prevent insertion of nodeviewcount record.
  *
- * @param \Drupal\node\NodeInterface $entity
+ * @param \Drupal\node\NodeInterface $node
  *   The node object to be recorded in nodeviewcount statistics.
  * @param string $view_mode
  *   View mode of the node.

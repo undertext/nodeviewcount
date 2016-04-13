@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\nodeviewcount\Form\NodeViewCountSettingsForm.
- */
-
 namespace Drupal\nodeviewcount\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;

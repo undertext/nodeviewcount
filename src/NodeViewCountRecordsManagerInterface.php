@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\nodeviewcount\NodeViewCountRecordsManagerInterface.
- */
-
 namespace Drupal\nodeviewcount;
 
 use Drupal\Core\Session\AccountInterface;
@@ -23,8 +18,6 @@ interface NodeViewCountRecordsManagerInterface {
    *   Id of user which viewed the content.
    * @param int $nid
    *   Id of viewed node.
-   *
-   * @return void
    */
   public function insertRecord($uid, $nid);
 
@@ -48,38 +41,39 @@ interface NodeViewCountRecordsManagerInterface {
    *
    * @param int $time
    *   Lifetime of the records in milliseconds.
-   * @return void
    */
   public function deleteOldRecords($time);
 
   /**
-   * Is node displayed in given view mode should be counted in statistics.
+   * Checks whether node in given view mode should be counted in statistics.
    *
    * @param string $view_mode
-   *  View mode of node.
+   *   View mode of node.
    *
-   * @return boolean
-   *   Is node displayed in given view mode should be counted in statistics.
+   * @return bool
+   *   TRUE if node in given view mode should be counted in statistics.
    */
   public function isRecordableForViewMode($view_mode);
 
   /**
-   * Is node displayed for given user role should be counted in statistics.
+   * Checks whether node should be counted in statistics for given user role.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
-   *   User account object.
+   *   User account object to fetch roles from.
    *
-   * @return boolean
+   * @return bool
+   *   TRUE if node should be counted in statistics for given user role.
    */
   public function isRecordableForUserRole(AccountInterface $account);
 
   /**
-   * Is displayed node of given node type should be counted in statistics.
+   * Checks whether node of given node type should be counted in statistics.
    *
    * @param NodeInterface $node
    *   Node object.
    *
-   * @return boolean
+   * @return bool
+   *   TRUE if node of given node type should be counted in statistics.
    */
   public function isRecordableForNodeType(NodeInterface $node);
 

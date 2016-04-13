@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\nodeviewcount\Controller\NodeViewCountController.
- */
-
 namespace Drupal\nodeviewcount\Controller;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
