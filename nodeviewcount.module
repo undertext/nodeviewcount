@@ -39,9 +39,7 @@ function nodeviewcount_cron() {
   /** @var \Drupal\nodeviewcount\NodeViewCountRecordsManager $records_manager */
   $records_manager = Drupal::service('nodeviewcount.records_manager');
   $logs_life_time = $records_manager->getLogsLifeTime();
-  if ($records_manager->getLogsLifeTime() > 0) {
-    /** @var \Drupal\nodeviewcount\NodeViewCountRecordsManager $records_manager */
-    $records_manager = Drupal::service('nodeviewcount.records_manager');
+  if ($logs_life_time > 0) {
     $records_manager->deleteOldRecords($logs_life_time);
   }
 }
