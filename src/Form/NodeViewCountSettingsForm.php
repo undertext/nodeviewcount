@@ -238,19 +238,19 @@ class NodeViewCountSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $counting_user_roles = $form_state->getValue('user_roles');
-    $excluded_user_roles = $form_state->getValue('excluded_user_roles');
+    $counting_user_roles = array_filter($form_state->getValue('user_roles'));
+    $excluded_user_roles = array_filter($form_state->getValue('excluded_user_roles'));
     foreach ($counting_user_roles as $key => $couting_user_role) {
       if ($couting_user_role) {
-        $excluded_user_roles[$key] = 0;
+        unset($excluded_user_roles[$key]);
       }
     }
     $this->config('nodeviewcount.settings')
-      ->set('node_types', $form_state->getValue('node_types'))
-      ->set('view_modes', $form_state->getValue('view_modes'))
+      ->set('node_types', array_filter($form_state->getValue('node_types')))
+      ->set('view_modes', array_filter($form_state->getValue('view_modes')))
       ->set('user_roles', $counting_user_roles)
       ->set('excluded_user_roles', $excluded_user_roles)
-      ->set('logs_life_time', $form_state->getValue('logs_life_time'))
+      ->set('logs_life_time', (int) $form_state->getValue('logs_life_time'))
       ->save(TRUE);
     $this->cacheTagsInvalidator->invalidateTags(['node_view']);
     parent::submitForm($form, $form_state);
