@@ -19,16 +19,14 @@ function nodeviewcount_node_view(array &$build, NodeInterface $node, EntityViewD
   $user = Drupal::currentUser();
   if ($records_manager->isRecordableForNodeType($node) && $records_manager->isRecordableForUserRole($user) && $records_manager->isRecordableForViewMode($view_mode)) {
     $build['#attached']['library'][] = 'nodeviewcount/nodeviewcount.base';
-    $settings = array(
-      'data' => array(
-        'nid' => $node->id(),
-        'uid' => $user->id(),
-        'view_mode' => $view_mode,
-      ),
-      'url' => Url::fromRoute('nodeviewcount.update_counter')
-        ->toString()
-    );
-    $build['#attached']['drupalSettings']['nodeviewcount'] = $settings;
+    $build['#attached']['drupalSettings']['nodeviewcount']['url'] = Url::fromRoute('nodeviewcount.update_counter')
+      ->toString();
+    $settings = [
+      'nid' => $node->id(),
+      'uid' => $user->id(),
+      'view_mode' => $view_mode,
+    ];
+    $build['#attached']['drupalSettings']['nodeviewcount']['data'][$node->id()] = $settings;
   }
 }
 

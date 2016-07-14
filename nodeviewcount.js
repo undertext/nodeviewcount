@@ -8,11 +8,13 @@
   'use strict';
 
   $(document).ready(function () {
-    $.ajax({
-      type: 'POST',
-      cache: false,
-      url: drupalSettings.nodeviewcount.url,
-      data: drupalSettings.nodeviewcount.data
+    $.each(drupalSettings.nodeviewcount.data, function (key, value) {
+      $.ajax({
+        type: 'POST',
+        cache: false,
+        url: drupalSettings.nodeviewcount.url,
+        data: value
+      });
     });
   });
 })(jQuery, Drupal, drupalSettings);
