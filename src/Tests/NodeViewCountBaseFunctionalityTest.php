@@ -10,6 +10,13 @@ namespace Drupal\nodeviewcount\Tests;
 class NodeViewCountBaseFunctionalityTest extends NodeViewCountTestBase {
 
   /**
+   * Modules to enable.
+   *
+   * @var array
+   */
+  public static $modules = ['views'];
+
+  /**
    * Tests that cron clears old nodeviewcount records.
    */
   public function testExpiredLogs() {
@@ -40,6 +47,23 @@ class NodeViewCountBaseFunctionalityTest extends NodeViewCountTestBase {
     $this->checkFullViewMode('logged', $this->testNotTrackedNode, FALSE);
     $this->checkFullViewMode('administrator', $this->firstTestTrackedNode, FALSE);
     $this->checkFullViewMode('administrator', $this->testNotTrackedNode, FALSE);
+  }
+
+  /**
+   * Tests nodeviewcount settings for nodes in teaser view mode.
+   */
+  public function testNodesWithTeaserViewMode() {
+    $this->checkTeaserViewMode('anonymous', TRUE);
+    $this->checkTeaserViewMode('logged', TRUE);
+    $this->checkTeaserViewMode('administrator', FALSE);
+    $this->drupalLogin($this->adminUser);
+    $edit['view_modes[teaser]'] = FALSE;
+    $this->drupalPostForm('admin/config/content/nodeviewcount', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/nodeviewcount');
+    $this->drupalLogout();
+    $this->checkTeaserViewMode('anonymous', FALSE);
+    $this->checkTeaserViewMode('logged', FALSE);
+    $this->checkTeaserViewMode('administrator', FALSE);
   }
 
   /**
@@ -80,6 +104,49 @@ class NodeViewCountBaseFunctionalityTest extends NodeViewCountTestBase {
       $this->assertNoRaw('modules/nodeviewcount/nodeviewcount.js', 'Nodeviewcount statistics library is not included.');
     }
     // Logout if needed.
+    if ($user_role !== 'anonymous') {
+      $this->drupalLogout();
+    }
+  }
+
+  /**
+   * Check nodeviewcount settings on node view for teaser view mode.
+   *
+   * @param string $user_role
+   *   User role for visiting nodes.
+   * @param boolean $expected_result
+   *   TRUE if nodeviewcount scripts and settings should be included.
+   */
+  public function checkTeaserViewMode($user_role, $expected_result) {
+    $user_id = 0;
+    if ($user_role !== 'anonymous') {
+      $user = $this->createUserWithRole($user_role);
+      $user_id = $user->id();
+      $this->drupalLogin($user);
+    }
+    $this->drupalGet('node');
+
+    if ($expected_result) {
+      $this->assertRaw('modules/nodeviewcount/nodeviewcount.js', 'Nodeviewcount statistics library is included.');
+      $settings = $this->getDrupalSettings();
+      $expectedSettings = [
+        $this->firstTestTrackedNode->id() => [
+          'nid' => $this->firstTestTrackedNode->id(),
+          'uid' => $user_id,
+          'view_mode' => 'teaser',
+        ],
+        $this->secondTestTrackedNode->id() => [
+          'nid' => $this->secondTestTrackedNode->id(),
+          'uid' => $user_id,
+          'view_mode' => 'teaser',
+        ]
+      ];
+      $this->assertEqual($expectedSettings, $settings['nodeviewcount']['data'], 'drupalSettings to mark node as read are present.');
+    }
+    else {
+      $this->assertNoRaw('modules/nodeviewcount/nodeviewcount.js', 'Nodeviewcount statistics library is not included.');
+    }
+
     if ($user_role !== 'anonymous') {
       $this->drupalLogout();
     }
