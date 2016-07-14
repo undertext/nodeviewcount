@@ -67,6 +67,21 @@ class NodeViewCountBaseFunctionalityTest extends NodeViewCountTestBase {
   }
 
   /**
+   * Tests recording of new nodeviewcount record after AJAX call.
+   */
+  public function testAjaxCall() {
+    $this->sendAjaxStatistics($this->firstTestTrackedNode->id(), 0);
+    $this->sendAjaxStatistics($this->firstTestTrackedNode->id(), 1);
+
+    $result = $this->connection->select('nodeviewcount', 'nvc')
+      ->fields('nvc', ['nid'])
+      ->condition('nvc.nid', $this->firstTestTrackedNode->id())
+      ->execute()
+      ->fetchAll();
+    $this->assertEqual(count($result), 2, 'Verifying that the node counter is incremented.');
+  }
+
+  /**
    * Check nodeviewcount settings on node view for full view mode.
    *
    * @param string $user_role
