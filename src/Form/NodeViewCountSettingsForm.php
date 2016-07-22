@@ -202,7 +202,7 @@ class NodeViewCountSettingsForm extends ConfigFormBase {
     /** @var \Drupal\user\RoleInterface[] $roles */
     $roles = $this->entityTypeManager->getStorage('user_role')->loadMultiple();
     foreach ($roles as $role_id => $role) {
-      if (empty($excluded_user_roles[$role_id])) {
+      if (!in_array($role_id, $excluded_user_roles)) {
         $roles_options[$role_id] = $role->label();
       }
     }
@@ -246,10 +246,10 @@ class NodeViewCountSettingsForm extends ConfigFormBase {
       }
     }
     $this->config('nodeviewcount.settings')
-      ->set('node_types', array_filter($form_state->getValue('node_types')))
-      ->set('view_modes', array_filter($form_state->getValue('view_modes')))
-      ->set('user_roles', $counting_user_roles)
-      ->set('excluded_user_roles', $excluded_user_roles)
+      ->set('node_types', array_keys(array_filter($form_state->getValue('node_types'))))
+      ->set('view_modes', array_keys(array_filter($form_state->getValue('view_modes'))))
+      ->set('user_roles', array_keys($counting_user_roles))
+      ->set('excluded_user_roles', array_keys($excluded_user_roles))
       ->set('logs_life_time', (int) $form_state->getValue('logs_life_time'))
       ->save(TRUE);
     $this->cacheTagsInvalidator->invalidateTags(['node_view']);
