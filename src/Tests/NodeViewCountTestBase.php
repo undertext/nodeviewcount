@@ -104,7 +104,10 @@ abstract class NodeViewCountTestBase extends WebTestBase {
       'name' => 'Basic page with no tracking',
     ]);
     // Create role for authenticated user.
-    $this->createRole(['access content'], 'logged');
+    $this->createRole([
+      'access content',
+      'change own username'
+    ], 'logged', 'logged');
     $this->setNodeviewcountSettings();
   }
 
