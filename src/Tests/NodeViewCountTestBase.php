@@ -66,12 +66,14 @@ abstract class NodeViewCountTestBase extends WebTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->adminUser = $this->drupalCreateUser([
+    $this->createRole([
       'access administration pages',
       'administer modules',
       'administer users',
       'access content',
-    ]);
+    ], 'administrator', 'administrator');
+    $this->adminUser = $this->createUserWithRole('administrator');
+
     $this->firstTestTrackedNode = $this->drupalCreateNode([
       'type' => 'tracked_page',
       'uid' => $this->adminUser->id(),
@@ -90,14 +92,11 @@ abstract class NodeViewCountTestBase extends WebTestBase {
     $this->connection = $this->container->get('database');
     $this->client = \Drupal::service('http_client_factory')
       ->fromOptions(['config/curl' => [CURLOPT_TIMEOUT => 20]]);
-    // Create Basic page node type.
-    if ($this->profile !== 'standard') {
-      $this->drupalCreateContentType([
-          'type' => 'tracked_page',
-          'name' => 'Basic page with tracking',
-        ]
-      );
-    }
+    $this->drupalCreateContentType([
+        'type' => 'tracked_page',
+        'name' => 'Basic page with tracking',
+      ]
+    );
     // Create one more content type.
     $this->drupalCreateContentType([
       'type' => 'not_tracked_page',
@@ -106,7 +105,7 @@ abstract class NodeViewCountTestBase extends WebTestBase {
     // Create role for authenticated user.
     $this->createRole([
       'access content',
-      'change own username'
+      'change own username',
     ], 'logged', 'logged');
     $this->setNodeviewcountSettings();
   }

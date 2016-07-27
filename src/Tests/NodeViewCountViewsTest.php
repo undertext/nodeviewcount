@@ -53,6 +53,7 @@ class NodeViewCountViewsTest extends NodeViewCountTestBase {
     $this->drupalLogin($user);
     $this->sendAjaxStatistics($this->secondTestTrackedNode->id(), 0);
     $this->sendAjaxStatistics($this->firstTestTrackedNode->id(), $user->id());
+    sleep(5);
     $this->sendAjaxStatistics($this->secondTestTrackedNode->id(), $user->id());
     $this->drupalGet('<front>');
     $this->assertFieldByXpath("(//div[@class='views-field views-field-title']/span/a)[1]", $this->secondTestTrackedNode->getTitle());
